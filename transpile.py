@@ -1,29 +1,32 @@
-lineCount = 0
-quoteCount = 0
-finalFile = ''
+colonCount = 0
+finaldoc = ''
+tabsList = []
 crumbFile = open('main.yaml', 'r')
 for line in crumbFile.readlines():
-    newLine = line.replace(':', '(')
-    if newLine != line:
-        lineCount += 1
-    for i in newLine:
-        if i == "'" or i == '"':
-            quoteCount += 1
-    if quoteCount == 2:
-        newLine = newLine.replace('\n', ',\n')
-    quoteCount = 0
-    finalFile += newLine
+    spaceCount = 0
+    tabCount = 0
+    for i in line:
+        if i == ' ':
+            spaceCount += 1
+    if ':' in line:
+        colonCount +=1
+        newLine = line.replace(':', '(')
 
-for i in range(lineCount-1):
-    finalFile += '),'
+    tabCount = spaceCount/4
+    tabCount = int(tabCount)
+    for i in tabsList:
+        if tabsList[i] <= tabCount:
+            newLine += '\n),'
+            tabsList.pop(i)
+    finaldoc += newLine
+    tabsList.append(tabCount)
 
 crumbFile.close()
-finalFile += ')'
 
-print(finalFile)
+
 
 builder = open('builder.js', 'w')
 
-builder.writelines(finalFile)
+# builder.writelines(finalFile)
 
 builder.close()
